@@ -1,8 +1,9 @@
-provider "aws" {
-  region = var.aws_region
+data "aws_region" "current" {
 }
 
-data "aws_region" "current" {
+# Data block to grab current IP and add into SG rules
+data "http" "current" {
+  url = "https://api.ipify.org"
 }
 
 data "aws_partition" "current" {}
@@ -217,4 +218,42 @@ resource "aws_nat_gateway" "boundary_poc" {
   )
 
   depends_on = [aws_internet_gateway.boundary_poc]
+}
+
+resource "aws_security_group" "boundary_ingress_worker_ssh" {
+  name        = "boundary_ingress_worker_allow_ssh_9202"
+  description = "SG for Boundary Ingress Worker"
+  vpc_id      = aws_vpc.boundary_poc.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["${data.http.current.response_body}/32"]
+  }
+
+  ingress {
+    from_port   = 9202
+    to_port     = 9202
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    Name = "allow_ssh"
+  }
 }

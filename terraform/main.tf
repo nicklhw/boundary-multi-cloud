@@ -1,3 +1,20 @@
+terraform {
+  required_providers {
+    boundary = {
+      source  = "hashicorp/boundary"
+      version = ">=1.0.7"
+    }
+    http = {
+      source  = "hashicorp/http"
+      version = ">=3.2.1"
+    }
+    cloudinit = {
+      source  = "hashicorp/cloudinit"
+      version = ">=2.3.2"
+    }
+  }
+}
+
 provider "boundary" {
   addr                   = var.boundary_cluster_url
   scope_id               = "global"
@@ -5,15 +22,7 @@ provider "boundary" {
   auth_method_password   = var.global_admin_password
 }
 
-data "boundary_scope" "org" {
-  name     = "SEA"
-  scope_id = "global"
+provider "aws" {
+  region = var.aws_region
 }
 
-# Create org scope
-resource "boundary_scope" "proj" {
-  name                     = var.boundary_proj_name
-  scope_id                 = data.boundary_scope.org.id
-  auto_create_admin_role   = true
-  auto_create_default_role = true
-}
