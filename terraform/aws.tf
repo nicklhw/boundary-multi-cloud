@@ -126,6 +126,7 @@ resource "aws_security_group" "boundary_poc" {
     to_port     = 22
     protocol    = "tcp"
     self        = true
+    cidr_blocks = [aws_subnet.public.cidr_block]
     description = "Allow incoming SSH connections"
   }
 
@@ -195,7 +196,7 @@ resource "aws_instance" "boundary_egress_worker" {
   vpc_security_group_ids      = [aws_security_group.boundary_poc.id]
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
   tags = merge(
-    { Name = "${var.prefix}-instance" },
+    { Name = "Boundary Target" },
     var.aws_tags
   )
 }
