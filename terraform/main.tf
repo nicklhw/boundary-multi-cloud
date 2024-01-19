@@ -12,6 +12,10 @@ terraform {
       source  = "hashicorp/cloudinit"
       version = ">=2.3.2"
     }
+    aws = {
+      source  = "hashicorp/aws"
+      version = ">=5.33.0"
+    }
   }
 }
 
@@ -26,3 +30,12 @@ provider "aws" {
   region = var.aws_region
 }
 
+provider "vault" {
+  address   = var.vault_address
+  namespace = var.vault_admin_namespace
+  auth_login_userpass {
+    namespace = var.vault_admin_namespace
+    username  = var.vault_admin_username
+    password  = var.vault_admin_password
+  }
+}

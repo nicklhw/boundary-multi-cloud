@@ -54,3 +54,28 @@ variable "aws_tags" {
 variable "ssh_public_key" {
   type = string
 }
+
+variable "vault_address" {
+  type    = string
+  default = ""
+}
+
+variable "vault_admin_username" {
+  type    = string
+  default = ""
+}
+
+variable "vault_admin_password" {
+  type    = string
+  default = ""
+}
+
+variable "vault_admin_namespace" {
+  type    = string
+  default = "admin"
+}
+
+variable "ssh_username" {
+  type    = string
+  default = ""
+}

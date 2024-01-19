@@ -13,7 +13,7 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-bionic-18.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
   filter {
@@ -187,11 +187,13 @@ resource "aws_iam_instance_profile" "instance_profile" {
   role = aws_iam_role.instance_role.name
 }
 
-resource "aws_instance" "boundary_egress_worker" {
+resource "aws_instance" "boundary_target" {
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = "t2.micro"
   key_name                    = aws_key_pair.boundary_poc.key_name
   associate_public_ip_address = false
+  user_data_base64            = data.cloudinit_config.ssh_trusted_ca.rendered
+  user_data_replace_on_change = true
   subnet_id                   = aws_subnet.private.id
   vpc_security_group_ids      = [aws_security_group.boundary_poc.id]
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
@@ -199,6 +201,35 @@ resource "aws_instance" "boundary_egress_worker" {
     { Name = "Boundary Target" },
     var.aws_tags
   )
+}
+
+//Configure the EC2 host to trust Vault as the CA
+data "cloudinit_config" "ssh_trusted_ca" {
+  gzip          = false
+  base64_encode = true
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = <<-EOF
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo curl -o /etc/ssh/trusted-user-ca-keys.pem \
+    --header "X-Vault-Namespace: admin/${vault_namespace.boundary.path}" \
+    -X GET \
+    ${var.vault_address}/v1/ssh-client-signer/public_key
+    sudo echo TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem >> /etc/ssh/sshd_config
+    sudo systemctl restart sshd.service
+    EOF
+  }
+
+  part {
+    content_type = "text/x-shellscript"
+    content      = <<-EOF
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo adduser nick
+    EOF
+  }
 }
 
 resource "aws_eip" "boundary_poc" {
