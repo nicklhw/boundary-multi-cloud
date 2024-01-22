@@ -79,3 +79,9 @@ variable "ssh_username" {
   type    = string
   default = ""
 }
+
+variable "s3_bucket_name" {
+  type    = string
+  default = "boundary-s3-bucket"
+}
+

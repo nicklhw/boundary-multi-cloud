@@ -289,3 +289,59 @@ resource "aws_security_group" "boundary_ingress_worker_ssh" {
     Name = "allow_ssh"
   }
 }
+
+### BEGIN: Session Recording Configuration ###
+
+data "aws_caller_identity" "current" {}
+
+locals {
+  my_email = split("/", data.aws_caller_identity.current.arn)[2]
+}
+
+data "aws_iam_policy" "demo_user_permissions_boundary" {
+  name = "DemoUser"
+}
+
+data "aws_iam_user" "demo" {
+  user_name = "demo-${local.my_email}"
+}
+
+resource "aws_iam_user" "boundary_bsr" {
+  count                = data.aws_iam_user.demo.id != null ? 0 : 1
+  name                 = "demo-${local.my_email}"
+  permissions_boundary = data.aws_iam_policy.demo_user_permissions_boundary.arn
+  force_destroy        = true
+}
+
+resource "aws_iam_user_policy_attachment" "boundary_bsr" {
+  count      = data.aws_iam_user.demo.id != null ? 0 : 1
+  user       = aws_iam_user.boundary_bsr[0].name
+  policy_arn = data.aws_iam_policy.demo_user_permissions_boundary.arn
+}
+
+resource "aws_iam_access_key" "boundary_bsr" {
+  user = "demo-${local.my_email}"
+}
+
+resource "aws_s3_bucket" "boundary_session_recording" {
+  bucket        = var.s3_bucket_name
+  force_destroy = true
+  tags = merge(
+    { Name = "${var.prefix}-s3-bucket" },
+    var.aws_tags
+  )
+}
+
+resource "aws_s3_bucket_versioning" "versioning_demo" {
+  bucket = aws_s3_bucket.boundary_session_recording.id
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "aws_s3_bucket_metric" "demo-bucket-metric" {
+  bucket = aws_s3_bucket.boundary_session_recording.id
+  name   = "EntireBucket"
+}
+
+### END: Session Recording Configuration ###

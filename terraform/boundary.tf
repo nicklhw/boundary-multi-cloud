@@ -42,10 +42,40 @@ resource "boundary_target" "ec2_ssh_cert_injection" {
   default_port                               = 22
   address                                    = aws_instance.boundary_target.private_ip
   injected_application_credential_source_ids = [boundary_credential_library_vault_ssh_certificate.vault_ssh_cert.id]
-#  ingress_worker_filter                      = "\"sm-ingress-upstream-worker1\" in \"/tags/type\""
   egress_worker_filter                       = "\"sm-ingress-upstream-worker1\" in \"/tags/type\""
-  #  enable_session_recording                   = true
-  #  storage_bucket_id                          = boundary_storage_bucket.s3.id
+  enable_session_recording                   = true
+  storage_bucket_id                          = boundary_storage_bucket.boundary_aws_bucket.id
 }
 
 ### END: SSH Certification Injection Configuration ###
+
+### BEGIN: Session Recording Configuration ###
+
+resource "boundary_storage_bucket" "boundary_aws_bucket" {
+  name        = "hcpb-session-recording-bucket"
+  scope_id    = "global"
+  plugin_name = "aws"
+  bucket_name = var.s3_bucket_name
+  attributes_json = jsonencode({
+    "region"                      = data.aws_region.current.name,
+    "disable_credential_rotation" = true
+  })
+
+  secrets_json = jsonencode({
+    "access_key_id"     = aws_iam_access_key.boundary_bsr.id,
+    "secret_access_key" = aws_iam_access_key.boundary_bsr.secret
+  })
+  worker_filter = " \"sm-ingress-upstream-worker1\" in \"/tags/type\" "
+}
+
+/* Add a time_sleep to ensure that the Boundary worker has time to register with the controllers
+and be in an active state. The boundary_storage_bucket needs to have an active worker when
+you configure the worker_filter to specify which target you wish to use. If you do not have
+an active worker, the build will fail
+*/
+#resource "time_sleep" "wait_for_ingress_worker_creation" {
+#  create_duration = "3m"
+#  depends_on      = [aws_instance.boundary_ingress_worker]
+#}
+
+### END: Session Recording Configuration ###
