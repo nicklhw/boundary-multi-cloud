@@ -132,8 +132,21 @@ resource "aws_instance" "boundary_ingress_worker" {
   subnet_id                   = aws_subnet.public.id
   vpc_security_group_ids      = [aws_security_group.boundary_ingress_worker_ssh.id]
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
-  associate_public_ip_address = true
+  #  associate_public_ip_address = true
   tags = {
     Name = "Boundary Ingress Worker"
   }
+}
+
+resource "aws_eip" "boundary_ingress_worker" {
+  domain = "vpc"
+  tags = merge(
+    { Name = "${var.prefix}-eip-boundary-ingress-worker" },
+    var.aws_tags
+  )
+}
+
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.boundary_ingress_worker.id
+  allocation_id = aws_eip.boundary_ingress_worker.id
 }
