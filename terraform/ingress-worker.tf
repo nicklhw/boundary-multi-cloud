@@ -122,17 +122,17 @@ parameter. The depends_on argument is set to ensure that the networking is estab
 and that the boundary_worker resource also completes, to ensure the token is generated first.
 */
 resource "aws_instance" "boundary_ingress_worker" {
-  ami                         = "ami-0cc87e5027adcdca8"
-  instance_type               = "t2.micro"
-  availability_zone           = "us-east-2a"
-#  user_data_replace_on_change = true
-  user_data_base64            = data.cloudinit_config.boundary_ingress_worker.rendered
-  key_name                    = aws_key_pair.boundary_poc.key_name
-  private_ip                  = "10.0.10.17"
-  subnet_id                   = aws_subnet.public.id
-  vpc_security_group_ids      = [aws_security_group.boundary_ingress_worker_ssh.id]
-  iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
+  ami                    = "ami-0cc87e5027adcdca8"
+  instance_type          = "t2.micro"
+  availability_zone      = "us-east-2a"
+  user_data_base64       = data.cloudinit_config.boundary_ingress_worker.rendered
+  key_name               = aws_key_pair.boundary_poc.key_name
+  private_ip             = "10.0.10.17"
+  subnet_id              = aws_subnet.public.id
+  vpc_security_group_ids = [aws_security_group.boundary_ingress_worker_ssh.id]
+  iam_instance_profile   = aws_iam_instance_profile.instance_profile.name
   #  associate_public_ip_address = true
+  #  user_data_replace_on_change = true
   tags = {
     Name = "Boundary Ingress Worker"
   }

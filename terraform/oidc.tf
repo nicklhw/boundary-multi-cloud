@@ -1,3 +1,5 @@
+# Use account_claims_maps and claims_scopes to request claims from
+# IDP and map them Boundary account attributes
 resource "boundary_auth_method_oidc" "provider" {
   name                 = "Auth0"
   description          = "OIDC auth method for Auth0"
@@ -10,12 +12,14 @@ resource "boundary_auth_method_oidc" "provider" {
   is_primary_for_scope = true
   state                = "active-public"
   max_age              = 0
+  account_claim_maps   = ["sub=sub", "name=name", "email=email"]
+  claims_scopes        = ["profile"]
 }
 
-resource "boundary_account_oidc" "oidc_user" {
-  name           = "nick-hashicorp"
-  description    = "OIDC account for Nick-HashiCorp"
-  auth_method_id = boundary_auth_method_oidc.provider.id
-  issuer         = var.auth0_domain
-  subject        = var.auth0_subject
-}
+#resource "boundary_account_oidc" "oidc_user" {
+#  name           = "nick-hashicorp"
+#  description    = "OIDC account for Nick-HashiCorp"
+#  auth_method_id = boundary_auth_method_oidc.provider.id
+#  issuer         = var.auth0_domain
+#  subject        = var.auth0_subject
+#}
