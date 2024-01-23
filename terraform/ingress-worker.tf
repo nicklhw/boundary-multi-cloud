@@ -125,7 +125,7 @@ resource "aws_instance" "boundary_ingress_worker" {
   ami                         = "ami-0cc87e5027adcdca8"
   instance_type               = "t2.micro"
   availability_zone           = "us-east-2a"
-  user_data_replace_on_change = true
+#  user_data_replace_on_change = true
   user_data_base64            = data.cloudinit_config.boundary_ingress_worker.rendered
   key_name                    = aws_key_pair.boundary_poc.key_name
   private_ip                  = "10.0.10.17"
