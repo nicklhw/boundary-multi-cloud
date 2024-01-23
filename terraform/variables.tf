@@ -3,6 +3,9 @@ variable "boundary_cluster_url" {
   default = ""
 }
 
+variable "boundary_password_auth_method_id" {
+}
+
 variable "global_admin_username" {
   type    = string
   default = ""
@@ -85,3 +88,14 @@ variable "s3_bucket_name" {
   default = "boundary-s3-bucket"
 }
 
+variable "auth0_domain" {
+}
+
+variable "auth0_client_id" {
+}
+
+variable "auth0_client_secret" {
+}
+
+variable "auth0_subject" {
+}

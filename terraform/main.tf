@@ -22,6 +22,7 @@ terraform {
 provider "boundary" {
   addr                   = var.boundary_cluster_url
   scope_id               = "global"
+  auth_method_id         = var.boundary_password_auth_method_id
   auth_method_login_name = var.global_admin_username
   auth_method_password   = var.global_admin_password
 }
