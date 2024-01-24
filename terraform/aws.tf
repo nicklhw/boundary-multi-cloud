@@ -131,10 +131,20 @@ resource "aws_security_group" "boundary_poc" {
   }
 
   ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    self        = true
+    cidr_blocks = [aws_subnet.public.cidr_block]
+    description = "Allow incoming Postgres connections"
+  }
+
+  ingress {
     from_port   = 3389
     to_port     = 3389
     protocol    = "tcp"
     self        = true
+    cidr_blocks = [aws_subnet.public.cidr_block]
     description = "Allow incoming RDP connections"
   }
 
@@ -198,7 +208,7 @@ resource "aws_instance" "boundary_target" {
   vpc_security_group_ids      = [aws_security_group.boundary_poc.id]
   iam_instance_profile        = aws_iam_instance_profile.instance_profile.name
   tags = merge(
-    { Name = "Boundary Target" },
+    { Name = "Boundary SSH Target" },
     var.aws_tags
   )
 }

@@ -11,6 +11,7 @@
 [Danny Knights: Vault Credential Injection For Boundary](https://github.com/dannyjknights/vault-credential-injection-for-boundary)
 [Danny Knights: Boundary Session Recording Demo](https://github.com/dannyjknights/hcp-boundary-session-recording)
 [Danny Knights: Boundary OIDC Demo](https://github.com/dannyjknights/hcp-boundary-okta-oidc)
+[Jose Merchan: Simple Boundary Demo](https://github.com/jm-merchan/Simple_Boundary_Demo/tree/master)
 [Access the internet from a private subnet using a NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html#public-nat-internet-access)
 [Doormat session minimum permission requirements](https://docs.prod.secops.hashicorp.services/base_images/aws_ami/#minimum-permissions)
 [Install Boundary under systemd](https://developer.hashicorp.com/boundary/docs/install-boundary/systemd)

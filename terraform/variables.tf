@@ -99,3 +99,6 @@ variable "auth0_client_secret" {
 
 variable "auth0_subject" {
 }
+
+variable "postgres_password" {
+}
