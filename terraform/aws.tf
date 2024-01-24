@@ -104,6 +104,11 @@ resource "aws_route_table" "private" {
     cidr_block = "0.0.0.0/0"
     gateway_id = aws_nat_gateway.boundary_poc.id
   }
+
+  route {
+    cidr_block                = data.hcp_hvn.vault_hvn.cidr_block
+    vpc_peering_connection_id = hcp_aws_network_peering.peer.provider_peering_id
+  }
 }
 
 resource "aws_route_table_association" "public" {
@@ -153,7 +158,7 @@ resource "aws_security_group" "boundary_poc" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
-    description = "Allow all traffic egress from boundary"
+    description = "Allow all egress traffic"
   }
 
   tags = merge(

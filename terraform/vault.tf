@@ -79,11 +79,44 @@ resource "vault_ssh_secret_backend_ca" "ca" {
 
 ### BEGIN: Database Credential Brokering Configuration ###
 
-#resource "vault_mount" "database" {
-#  path                      = "database"
-#  type                      = "database"
-#  default_lease_ttl_seconds = 300
-#  max_lease_ttl_seconds     = 3600
-#}
+resource "vault_mount" "database" {
+  namespace                 = vault_namespace.boundary.path
+  path                      = "database"
+  type                      = "database"
+  default_lease_ttl_seconds = 300
+  max_lease_ttl_seconds     = 3600
+}
+
+resource "vault_database_secret_backend_connection" "postgres" {
+  namespace     = vault_namespace.boundary.path
+  backend       = vault_mount.database.path
+  name          = "postgres"
+  allowed_roles = ["dba"]
+
+  # Going towards the private IP of the Ubuntu Server
+  postgresql {
+    connection_url = "postgresql://{{username}}:{{password}}@${aws_instance.postgres_target.private_ip}:5432/postgres?sslmode=disable"
+    username       = "vault"
+    password       = "vault-password"
+  }
+}
+
+resource "vault_database_secret_backend_role" "dba" {
+  namespace           = vault_namespace.boundary.path
+  backend             = vault_mount.database.path
+  name                = "dba"
+  db_name             = vault_database_secret_backend_connection.postgres.name
+  creation_statements = [file("templates/dba.sql.hcl")]
+}
+
+resource "vault_policy" "northwind_database" {
+  namespace = vault_namespace.boundary.path
+  name      = "northwind_database"
+  policy    = <<EOT
+path "database/creds/dba" {
+  capabilities = ["read"]
+}
+EOT
+}
 
 ### END: Database Credential Brokering Configuration ###
