@@ -76,3 +76,14 @@ resource "vault_ssh_secret_backend_ca" "ca" {
   generate_signing_key = true
 }
 ### END: SSH Certification Injection Configuration ###
+
+### BEGIN: Database Credential Brokering Configuration ###
+
+#resource "vault_mount" "database" {
+#  path                      = "database"
+#  type                      = "database"
+#  default_lease_ttl_seconds = 300
+#  max_lease_ttl_seconds     = 3600
+#}
+
+### END: Database Credential Brokering Configuration ###

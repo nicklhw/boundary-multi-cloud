@@ -135,7 +135,7 @@ resource "aws_security_group" "boundary_poc" {
     to_port     = 5432
     protocol    = "tcp"
     self        = true
-    cidr_blocks = [aws_subnet.public.cidr_block]
+    cidr_blocks = [aws_subnet.public.cidr_block, data.hcp_hvn.vault_hvn.cidr_block]
     description = "Allow incoming Postgres connections"
   }
 
@@ -144,7 +144,7 @@ resource "aws_security_group" "boundary_poc" {
     to_port     = 3389
     protocol    = "tcp"
     self        = true
-    cidr_blocks = [aws_subnet.public.cidr_block]
+    cidr_blocks = [aws_subnet.public.cidr_block, data.hcp_hvn.vault_hvn.cidr_block]
     description = "Allow incoming RDP connections"
   }
 

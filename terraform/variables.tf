@@ -102,3 +102,5 @@ variable "auth0_subject" {
 
 variable "postgres_password" {
 }
+
+variable "vault_hvn_id" {}
