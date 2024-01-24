@@ -14,8 +14,8 @@ resource "boundary_scope" "proj" {
 ### BEGIN: SSH Certification Injection Configuration ###
 
 # Create a Vault credential store
-resource "boundary_credential_store_vault" "vault_ssh_cert_injection" {
-  name      = "vault_ssh_cert_cred_store"
+resource "boundary_credential_store_vault" "vault_cred_store" {
+  name      = "vault_cred_store"
   address   = var.vault_address
   namespace = vault_namespace.boundary.id
   token     = vault_token.boundary_ssh_token.client_token
@@ -24,7 +24,7 @@ resource "boundary_credential_store_vault" "vault_ssh_cert_injection" {
 
 resource "boundary_credential_library_vault_ssh_certificate" "vault_ssh_cert" {
   name                = "vault_ssh_cert_library"
-  credential_store_id = boundary_credential_store_vault.vault_ssh_cert_injection.id
+  credential_store_id = boundary_credential_store_vault.vault_cred_store.id
   path                = "${vault_mount.ssh.id}/sign/${vault_ssh_secret_backend_role.boundary.name}"
   username            = var.ssh_username
   key_type            = "ecdsa"
@@ -79,3 +79,52 @@ an active worker, the build will fail
 #}
 
 ### END: Session Recording Configuration ###
+
+### BEGIN: Database Credential Brokering Configuration ###
+
+resource "boundary_credential_library_vault" "postgres_dba" {
+  name                = "northwind dba"
+  description         = "northwind dba"
+  credential_store_id = boundary_credential_store_vault.vault_cred_store.id
+  path                = "database/creds/dba"
+  http_method         = "GET"
+}
+
+resource "boundary_host_catalog_static" "aws_instance" {
+  name        = "db-catalog"
+  description = "DB catalog"
+  scope_id    = boundary_scope.proj.id
+}
+
+resource "boundary_host_static" "db" {
+  name            = "postgres-host"
+  host_catalog_id = boundary_host_catalog_static.aws_instance.id
+  address         = aws_instance.postgres_target.private_ip
+}
+
+resource "boundary_host_set_static" "db" {
+  name            = "db-host-set"
+  host_catalog_id = boundary_host_catalog_static.aws_instance.id
+  host_ids = [
+    boundary_host_static.db.id
+  ]
+}
+
+resource "boundary_target" "dba" {
+  type                     = "tcp"
+  name                     = "Northwind DBA Database"
+  description              = "DBA Target"
+  egress_worker_filter     = "\"sm-ingress-upstream-worker1\" in \"/tags/type\""
+  scope_id                 = boundary_scope.proj.id
+  session_connection_limit = -1
+  default_port             = 5432
+  host_source_ids = [
+    boundary_host_set_static.db.id
+  ]
+  # Comment this to avoid brokering the credentials
+  brokered_credential_source_ids = [
+    boundary_credential_library_vault.postgres_dba.id
+  ]
+}
+
+### END: Database Credential Brokering Configuration ###

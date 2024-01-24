@@ -64,7 +64,7 @@ resource "vault_ssh_secret_backend_role" "boundary" {
 resource "vault_token" "boundary_ssh_token" {
   namespace         = vault_namespace.boundary.path
   no_default_policy = true
-  policies          = [vault_policy.boundary-controller.name, vault_policy.ssh.name]
+  policies          = [vault_policy.boundary-controller.name, vault_policy.ssh.name, vault_policy.northwind_database.name]
   no_parent         = true
   period            = "20m"
   renewable         = true

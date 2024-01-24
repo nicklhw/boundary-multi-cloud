@@ -280,6 +280,13 @@ resource "aws_security_group" "boundary_ingress_worker_ssh" {
   }
 
   ingress {
+    from_port   = 5432
+    to_port     = 5432
+    protocol    = "tcp"
+    cidr_blocks = ["${data.http.current.response_body}/32"]
+  }
+
+  ingress {
     from_port   = 9202
     to_port     = 9202
     protocol    = "tcp"
