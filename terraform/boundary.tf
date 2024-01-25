@@ -36,7 +36,8 @@ resource "boundary_credential_library_vault_ssh_certificate" "vault_ssh_cert" {
 
 resource "boundary_target" "ec2_ssh_cert_injection" {
   scope_id                                   = boundary_scope.proj.id
-  name                                       = "ec2 ssh cert injection target"
+  name                                       = "EC2 Linux SSH"
+  description                                = "SSH Certificate Injection Target"
   type                                       = "ssh"
   session_connection_limit                   = -1
   default_port                               = 22
