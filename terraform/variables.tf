@@ -104,3 +104,11 @@ variable "postgres_password" {
 }
 
 variable "vault_hvn_id" {}
+
+variable "windows_instance_name" {
+  type        = string
+  description = "EC2 instance name for Windows Server"
+  default     = "tfwinsrv01"
+}
+
+variable "windows_admin_password" {}

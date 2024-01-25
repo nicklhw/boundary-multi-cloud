@@ -128,3 +128,51 @@ resource "boundary_target" "dba" {
 }
 
 ### END: Database Credential Brokering Configuration ###
+
+### BEGIN: RDP Credential Brokering Configuration ###
+
+resource "boundary_credential_library_vault" "windows" {
+  name                = "Vault KV"
+  description         = "Vault KV"
+  credential_store_id = boundary_credential_store_vault.vault_cred_store.id
+  path                = "secrets/data/windows_secret"
+  http_method         = "GET"
+}
+
+resource "boundary_host_catalog_static" "windows" {
+  name        = "Windows Server"
+  description = "Windows Server"
+  scope_id    = boundary_scope.proj.id
+}
+
+resource "boundary_host_static" "windows" {
+  name            = "windows-host"
+  host_catalog_id = boundary_host_catalog_static.windows.id
+  address         = aws_instance.windows_server.private_ip
+}
+
+resource "boundary_host_set_static" "windows" {
+  name            = "windows-host-set"
+  host_catalog_id = boundary_host_catalog_static.windows.id
+  host_ids = [
+    boundary_host_static.windows.id
+  ]
+}
+
+resource "boundary_target" "win_rdp" {
+  type                     = "tcp"
+  name                     = "Windows RDP"
+  description              = "RDP Target"
+  scope_id                 = boundary_scope.proj.id
+  session_connection_limit = -1
+  egress_worker_filter     = "\"sm-ingress-upstream-worker1\" in \"/tags/type\""
+  default_port             = 3389
+  host_source_ids = [
+    boundary_host_set_static.windows.id
+  ]
+  brokered_credential_source_ids = [
+    boundary_credential_library_vault.windows.id
+  ]
+}
+
+### END: RDP Credential Brokering Configuration ###

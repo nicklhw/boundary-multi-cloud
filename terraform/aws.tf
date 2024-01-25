@@ -24,19 +24,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-#data "aws_ami" "ubuntu" {
-#  filter {
-#    name   = "name"
-#    values = ["hc-security-base-ubuntu-2204*"]
-#  }
-#  filter {
-#    name   = "state"
-#    values = ["available"]
-#  }
-#  most_recent = true
-#  owners      = ["888995627335"]
-#}
-
 resource "aws_key_pair" "boundary_poc" {
   key_name   = "${var.prefix}-keypair"
   public_key = var.ssh_public_key
@@ -287,6 +274,13 @@ resource "aws_security_group" "boundary_ingress_worker_ssh" {
   }
 
   ingress {
+    from_port   = 3389
+    to_port     = 3389
+    protocol    = "tcp"
+    cidr_blocks = ["${data.http.current.response_body}/32"]
+  }
+
+  ingress {
     from_port   = 9202
     to_port     = 9202
     protocol    = "tcp"
@@ -308,7 +302,7 @@ resource "aws_security_group" "boundary_ingress_worker_ssh" {
   }
 
   tags = {
-    Name = "allow_ssh"
+    Name = "allow_ssh_rdp_postgres"
   }
 }
 

@@ -64,10 +64,15 @@ resource "vault_ssh_secret_backend_role" "boundary" {
 resource "vault_token" "boundary_ssh_token" {
   namespace         = vault_namespace.boundary.path
   no_default_policy = true
-  policies          = [vault_policy.boundary-controller.name, vault_policy.ssh.name, vault_policy.northwind_database.name]
-  no_parent         = true
-  period            = "20m"
-  renewable         = true
+  policies = [
+    vault_policy.boundary-controller.name,
+    vault_policy.ssh.name,
+    vault_policy.northwind_database.name,
+    vault_policy.windows_secret.name
+  ]
+  no_parent = true
+  period    = "20m"
+  renewable = true
 }
 
 resource "vault_ssh_secret_backend_ca" "ca" {
@@ -120,3 +125,42 @@ EOT
 }
 
 ### END: Database Credential Brokering Configuration ###
+
+### BEGIN: RDP Credential Brokering Configuration ###
+
+resource "vault_mount" "kv" {
+  namespace   = vault_namespace.boundary.path
+  path        = "secrets"
+  type        = "kv"
+  options     = { version = "2" }
+  description = "Key-Value Secrets Engine"
+}
+
+resource "vault_kv_secret_v2" "windows_secret" {
+  namespace = vault_namespace.boundary.path
+  mount     = vault_mount.kv.path
+  name      = "windows_secret"
+  data_json = jsonencode(
+    {
+      "data" : {
+        "username" : "Administrator",
+        "password" : var.windows_admin_password
+      }
+    }
+  )
+}
+
+resource "vault_policy" "windows_secret" {
+  namespace = vault_namespace.boundary.path
+  name      = "windows_secret"
+  policy    = <<EOT
+path "secrets/data/windows_secret" {
+  capabilities = ["read"]
+}
+path "secrets/metadata/windows_secret" {
+  capabilities = ["read"]
+}
+EOT
+}
+
+### END: RDP Credential Brokering Configuration ###
