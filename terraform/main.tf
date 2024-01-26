@@ -16,6 +16,10 @@ terraform {
       source  = "hashicorp/aws"
       version = ">=5.33.0"
     }
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">=3.89.0"
+    }
   }
 }
 
@@ -29,6 +33,10 @@ provider "boundary" {
 
 provider "aws" {
   region = var.aws_region
+}
+
+provider "azurerm" {
+  features {}
 }
 
 provider "vault" {
