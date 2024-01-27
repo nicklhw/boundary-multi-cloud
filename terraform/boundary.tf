@@ -130,7 +130,7 @@ resource "boundary_target" "dba" {
 
 ### END: Database Credential Brokering Configuration ###
 
-### BEGIN: RDP Credential Brokering Configuration ###
+### BEGIN: AWS RDP Credential Brokering Configuration ###
 
 resource "boundary_credential_library_vault" "windows" {
   name                = "Vault KV"
@@ -176,4 +176,52 @@ resource "boundary_target" "win_rdp" {
   ]
 }
 
-### END: RDP Credential Brokering Configuration ###
+### END: AWS RDP Credential Brokering Configuration ###
+
+### BEGIN: Azure RDP Credential Brokering Configuration ###
+
+resource "boundary_credential_library_vault" "azure_windows" {
+  name                = "Azure RDP Static Creds"
+  description         = "Azure RDP static creds in Vault KV"
+  credential_store_id = boundary_credential_store_vault.vault_cred_store.id
+  path                = "secrets/data/azure/windows_secret"
+  http_method         = "GET"
+}
+
+resource "boundary_host_catalog_static" "azure_windows" {
+  name        = "Azure Windows Server"
+  description = "Azure Windows Server"
+  scope_id    = boundary_scope.proj.id
+}
+
+resource "boundary_host_static" "azure_windows" {
+  name            = "azure-windows-host"
+  host_catalog_id = boundary_host_catalog_static.azure_windows.id
+  address         = azurerm_windows_virtual_machine.boundary_demo.private_ip_address
+}
+
+resource "boundary_host_set_static" "azure_windows" {
+  name            = "azure-windows-host-set"
+  host_catalog_id = boundary_host_catalog_static.azure_windows.id
+  host_ids = [
+    boundary_host_static.azure_windows.id
+  ]
+}
+
+resource "boundary_target" "azure_win_rdp" {
+  type                     = "tcp"
+  name                     = "Azure Windows RDP"
+  description              = "Azure RDP Target"
+  scope_id                 = boundary_scope.proj.id
+  session_connection_limit = -1
+  egress_worker_filter     = "\"az-ingress-upstream-worker1\" in \"/tags/type\""
+  default_port             = 3389
+  host_source_ids = [
+    boundary_host_set_static.azure_windows.id
+  ]
+  brokered_credential_source_ids = [
+    boundary_credential_library_vault.azure_windows.id
+  ]
+}
+
+### END: Azure RDP Credential Brokering Configuration ###

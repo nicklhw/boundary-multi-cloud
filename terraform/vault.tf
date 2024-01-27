@@ -68,7 +68,8 @@ resource "vault_token" "boundary_ssh_token" {
     vault_policy.boundary-controller.name,
     vault_policy.ssh.name,
     vault_policy.northwind_database.name,
-    vault_policy.windows_secret.name
+    vault_policy.windows_secret.name,
+    vault_policy.azure_windows_secret.name
   ]
   no_parent = true
   period    = "20m"
@@ -126,7 +127,7 @@ EOT
 
 ### END: Database Credential Brokering Configuration ###
 
-### BEGIN: RDP Credential Brokering Configuration ###
+### BEGIN: AWS RDP Credential Brokering Configuration ###
 
 resource "vault_mount" "kv" {
   namespace   = vault_namespace.boundary.path
@@ -163,4 +164,35 @@ path "secrets/metadata/windows_secret" {
 EOT
 }
 
-### END: RDP Credential Brokering Configuration ###
+### END: AWS RDP Credential Brokering Configuration ###
+
+### BEGIN: Azure RDP Credential Brokering Configuration ###
+
+resource "vault_kv_secret_v2" "azure_windows_secret" {
+  namespace = vault_namespace.boundary.path
+  mount     = vault_mount.kv.path
+  name      = "azure/windows_secret"
+  data_json = jsonencode(
+    {
+      "data" : {
+        "username" : "adminuser",
+        "password" : var.windows_admin_password
+      }
+    }
+  )
+}
+
+resource "vault_policy" "azure_windows_secret" {
+  namespace = vault_namespace.boundary.path
+  name      = "azure_windows_secret"
+  policy    = <<EOT
+path "secrets/data/azure/windows_secret" {
+  capabilities = ["read"]
+}
+path "secrets/metadata/azure/windows_secret" {
+  capabilities = ["read"]
+}
+EOT
+}
+
+### END: Azure RDP Credential Brokering Configuration ###
