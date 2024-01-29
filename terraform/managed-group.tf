@@ -21,6 +21,24 @@ resource "boundary_role" "oidc_admin_role" {
   scope_id      = boundary_scope.proj.id
 }
 
+resource "boundary_managed_group" "dba" {
+  name           = "Multi Cloud Demo DBA"
+  description    = "Multi Cloud Demo DBA - Auth0 Managed Group"
+  auth_method_id = boundary_auth_method_oidc.provider.id
+  filter         = "\"dba\" in \"/userinfo/boundary~1roles\""
+}
+
+# Grant strings: https://developer.hashicorp.com/boundary/docs/concepts/security/permissions/resource-table
+resource "boundary_role" "dba_role" {
+  name          = "Multi Cloud Demo DBA"
+  description   = "Multi Cloud Demo DBA role"
+  principal_ids = [boundary_managed_group.dba.id]
+  grant_strings = [
+    "id=${boundary_target.dba.id};type=target;actions=list,read,authorize-session",
+  ]
+  scope_id      = boundary_scope.proj.id
+}
+
 #resource "boundary_role" "oidc_user_role" {
 #  name          = "User Role"
 #  description   = "user role"
