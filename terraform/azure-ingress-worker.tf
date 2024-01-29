@@ -74,14 +74,15 @@ data "cloudinit_config" "azure_boundary_ingress_worker" {
 }
 
 resource "azurerm_linux_virtual_machine" "boundary_ingress_worker" {
-  name                  = "boundary-ingress-worker"
-  computer_name         = "boundary-ingress-worker"
-  resource_group_name   = azurerm_resource_group.boundary_demo.name
-  location              = azurerm_resource_group.boundary_demo.location
-  size                  = "Standard_A2_v2"
-  admin_username        = "adminuser"
-  network_interface_ids = [azurerm_network_interface.public_subnet_nic.id]
-  custom_data           = data.cloudinit_config.azure_boundary_ingress_worker.rendered
+  name                       = "boundary-ingress-worker"
+  computer_name              = "boundary-ingress-worker"
+  resource_group_name        = azurerm_resource_group.boundary_demo.name
+  location                   = azurerm_resource_group.boundary_demo.location
+  size                       = "Standard_A2_v2"
+  admin_username             = "adminuser"
+  network_interface_ids      = [azurerm_network_interface.public_subnet_nic.id]
+  custom_data                = data.cloudinit_config.azure_boundary_ingress_worker.rendered
+  encryption_at_host_enabled = false
 
   admin_ssh_key {
     username   = "adminuser"
@@ -98,6 +99,12 @@ resource "azurerm_linux_virtual_machine" "boundary_ingress_worker" {
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
+  }
+
+  lifecycle {
+    # Need to ignore changes on custom_data field because of an Azure API bug of not returning custom_data content
+    # https://github.com/hashicorp/terraform-provider-azurerm/issues/6756
+    ignore_changes = [custom_data]
   }
 }
 

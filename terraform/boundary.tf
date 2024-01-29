@@ -162,8 +162,8 @@ resource "boundary_host_set_static" "windows" {
 
 resource "boundary_target" "win_rdp" {
   type                     = "tcp"
-  name                     = "Windows RDP"
-  description              = "RDP Target"
+  name                     = "AWS Windows RDP"
+  description              = "AWS RDP Target"
   scope_id                 = boundary_scope.proj.id
   session_connection_limit = -1
   egress_worker_filter     = "\"sm-ingress-upstream-worker1\" in \"/tags/type\""
