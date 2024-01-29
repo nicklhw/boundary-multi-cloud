@@ -2,6 +2,9 @@
 If your claim response contained http://my-domain, you might create
 the above filter like this: \"auth0\" in
 \"/userinfo/http:~1~1my-domain/sub\".
+
+Setting up managed group filters
+https://developer.hashicorp.com/boundary/tutorials/identity-management/oidc-idp-groups#managed-groups-filters
 */
 resource "boundary_managed_group" "oidc_managed_group" {
   name           = "Multi Cloud Demo Admins"

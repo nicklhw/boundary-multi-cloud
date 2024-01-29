@@ -141,8 +141,8 @@ resource "boundary_credential_library_vault" "windows" {
 }
 
 resource "boundary_host_catalog_static" "windows" {
-  name        = "Windows Server"
-  description = "Windows Server"
+  name        = "AWS Windows Server"
+  description = "AWS Windows Server"
   scope_id    = boundary_scope.proj.id
 }
 
