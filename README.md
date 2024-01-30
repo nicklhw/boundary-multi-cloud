@@ -1,5 +1,34 @@
 # Boundary Multi-Cloud Demo
 
+## Quick Start
+
+1. You must have an HCP Boundary and Vault cluster deployed.
+2. Create a terraform.auto.tfvars file following the example.
+3. Logging Into A Doormat Managed Short-Term Subscription in hashicorp02:
+
+```shell
+az login --tenant 237fbc04-c52a-458b-af97-eaf7157c0cd4
+```
+
+4. Logging into AWS via doormat:
+
+```shell
+doormat login && eval $(doormat aws export --account aws_nick.wong_test)
+```
+
+5. Make sure Boundary workers are functional in AWS and Azure. Workers should
+   have a `Last Seen` status within seconds when you view it in the admin console.
+   Also check that the `boundary` systemd service is running in the VM.
+
+```shell
+sudo systemctl status -l boundary
+sudo journalctl -xfe -u boundary.service
+```
+
+6. Once all infrastructures are functionality. Test out the target connection using 
+   the demo scripts in the `scripts` folder. Remember to export the `BOUNDARY_ADD`
+   env variable and the target ID before executing the script.
+
 ## Notes
 
 - Use [Auth0 OIDC well-know endpoint](https://dev-p6g32x14ae33zvpy.us.auth0.com/.well-known/openid-configuration) to determine available claims.
