@@ -12,13 +12,8 @@ data "aws_ami" "ubuntu" {
   most_recent = true
 
   filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "image-id"
+    values = ["ami-07e4e8101a24d7fb5"]
   }
 
   owners = ["099720109477"] # Canonical
@@ -88,7 +83,7 @@ resource "aws_route_table" "private" {
   vpc_id = aws_vpc.boundary_poc.id
 
   route {
-    cidr_block = "0.0.0.0/0"
+    cidr_block     = "0.0.0.0/0"
     nat_gateway_id = aws_nat_gateway.boundary_poc.id
   }
 

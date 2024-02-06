@@ -36,7 +36,7 @@ resource "boundary_role" "dba_role" {
   grant_strings = [
     "id=${boundary_target.dba.id};type=target;actions=list,read,authorize-session",
   ]
-  scope_id      = boundary_scope.proj.id
+  scope_id = boundary_scope.proj.id
 }
 
 #resource "boundary_role" "oidc_user_role" {
