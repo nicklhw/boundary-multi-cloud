@@ -69,7 +69,8 @@ resource "vault_token" "boundary_ssh_token" {
     vault_policy.ssh.name,
     vault_policy.northwind_database.name,
     vault_policy.windows_secret.name,
-    vault_policy.azure_windows_secret.name
+    vault_policy.azure_windows_secret.name,
+    vault_policy.kubernetes_secrets.name
   ]
   no_parent = true
   period    = "20m"
