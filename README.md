@@ -45,3 +45,4 @@ sudo journalctl -xfe -u boundary.service
 [Doormat session minimum permission requirements](https://docs.prod.secops.hashicorp.services/base_images/aws_ami/#minimum-permissions)
 [Install Boundary under systemd](https://developer.hashicorp.com/boundary/docs/install-boundary/systemd)
 [Doormat access thru Azure CLI](https://docs.prod.secops.hashicorp.services/doormat/cli/azure/)
+[AKS Networking Deep Dive](https://inder-devops.medium.com/aks-networking-deep-dive-kubenet-vs-azure-cni-vs-azure-cni-overlay-a51709171ce9#:~:text=Pods%20CIDR,communicate%20directly%20with%20each%20other.)
