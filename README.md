@@ -4,7 +4,7 @@
 
 1. You must have an HCP Boundary and Vault cluster deployed.
 2. Create a terraform.auto.tfvars file following the example.
-3. Logging Into A Doormat Managed Short-Term Subscription in hashicorp02:
+3. Logging into a doormat managed Azure short-term subscription in hashicorp02:
 
 ```shell
 az login --tenant 237fbc04-c52a-458b-af97-eaf7157c0cd4
