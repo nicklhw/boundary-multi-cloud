@@ -1,0 +1,17 @@
+boundary_cluster_url             =
+boundary_password_auth_method_id =
+global_admin_username            =
+global_admin_password            =
+ssh_public_key                   =
+ssh_rsa_public_key               =
+vault_address                    =
+vault_admin_username             =
+vault_admin_password             =
+ssh_username                     =
+auth0_domain                     =
+auth0_client_id                  =
+auth0_client_secret              =
+auth0_subject                    =
+postgres_password                =
+vault_hvn_id                     =
+windows_admin_password           =
