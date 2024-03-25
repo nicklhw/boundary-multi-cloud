@@ -36,13 +36,13 @@ sudo journalctl -xfe -u boundary.service
 - Use [Auth0 Flow Actions](https://community.auth0.com/t/how-to-add-roles-and-permissions-to-the-id-token-using-actions/84506) to add custom claims to the id_token.
 
 ## Resources
-[Alex Harness: Boundary Multi-Cloud demo](https://github.com/mocofound/multicloud-pam-hcp-boundary/tree/main)
-[Danny Knights: Vault Credential Injection For Boundary](https://github.com/dannyjknights/vault-credential-injection-for-boundary)
-[Danny Knights: Boundary Session Recording Demo](https://github.com/dannyjknights/hcp-boundary-session-recording)
-[Danny Knights: Boundary OIDC Demo](https://github.com/dannyjknights/hcp-boundary-okta-oidc)
-[Jose Merchan: Simple Boundary Demo](https://github.com/jm-merchan/Simple_Boundary_Demo/tree/master)
-[Access the internet from a private subnet using a NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html#public-nat-internet-access)
-[Doormat session minimum permission requirements](https://docs.prod.secops.hashicorp.services/base_images/aws_ami/#minimum-permissions)
-[Install Boundary under systemd](https://developer.hashicorp.com/boundary/docs/install-boundary/systemd)
-[Doormat access thru Azure CLI](https://docs.prod.secops.hashicorp.services/doormat/cli/azure/)
-[AKS Networking Deep Dive](https://inder-devops.medium.com/aks-networking-deep-dive-kubenet-vs-azure-cni-vs-azure-cni-overlay-a51709171ce9#:~:text=Pods%20CIDR,communicate%20directly%20with%20each%20other.)
+- [Alex Harness: Boundary Multi-Cloud demo](https://github.com/mocofound/multicloud-pam-hcp-boundary/tree/main)
+- [Danny Knights: Vault Credential Injection For Boundary](https://github.com/dannyjknights/vault-credential-injection-for-boundary)
+- [Danny Knights: Boundary Session Recording Demo](https://github.com/dannyjknights/hcp-boundary-session-recording)
+- [Danny Knights: Boundary OIDC Demo](https://github.com/dannyjknights/hcp-boundary-okta-oidc)
+- [Jose Merchan: Simple Boundary Demo](https://github.com/jm-merchan/Simple_Boundary_Demo/tree/master)
+- [Access the internet from a private subnet using a NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/nat-gateway-scenarios.html#public-nat-internet-access)
+- [Doormat session minimum permission requirements](https://docs.prod.secops.hashicorp.services/base_images/aws_ami/#minimum-permissions)
+- [Install Boundary under systemd](https://developer.hashicorp.com/boundary/docs/install-boundary/systemd)
+- [Doormat access thru Azure CLI](https://docs.prod.secops.hashicorp.services/doormat/cli/azure/)
+- [AKS Networking Deep Dive](https://inder-devops.medium.com/aks-networking-deep-dive-kubenet-vs-azure-cni-vs-azure-cni-overlay-a51709171ce9#:~:text=Pods%20CIDR,communicate%20directly%20with%20each%20other.)
