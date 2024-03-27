@@ -29,6 +29,9 @@ sudo journalctl -xfe -u boundary.service
    the demo scripts in the `scripts` folder. Remember to export the `BOUNDARY_ADD`
    env variable and the target ID before executing the script.
 
+## TODO
+- Added Multi-Hop workers by connecting self-managed workers in a private subnet with HCP workers. 
+
 ## Notes
 
 - Use [Auth0 OIDC well-know endpoint](https://dev-p6g32x14ae33zvpy.us.auth0.com/.well-known/openid-configuration) to determine available claims.
